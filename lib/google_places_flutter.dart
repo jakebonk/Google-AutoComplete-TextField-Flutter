@@ -19,13 +19,15 @@ class GooglePlaceAutoCompleteTextField extends StatefulWidget {
 
   TextStyle textStyle;
   String googleAPIKey;
+  String proxy;
   int debounceTime = 600;
   List<String> countries = List();
   TextEditingController textEditingController = TextEditingController();
 
   GooglePlaceAutoCompleteTextField(
       {@required this.textEditingController,
-      @required this.googleAPIKey,
+      this.googleAPIKey,
+      this.proxy,
       this.debounceTime: 600,
       this.inputDecoration: const InputDecoration(),
       this.itmClick,
@@ -65,8 +67,13 @@ class _GooglePlaceAutoCompleteTextFieldState
 
   getLocation(String text) async {
     Dio dio = new Dio();
-    String url =
-        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$text&key=${widget.googleAPIKey}";
+    String url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$text";
+    if(widget.googleAPIKey != null) {
+      url +="&key=${widget
+          .googleAPIKey}";
+    }else if(widget.proxy != null){
+      url = widget.proxy + url;
+    }
 
     if (widget.countries != null) {
       // in
@@ -176,8 +183,14 @@ class _GooglePlaceAutoCompleteTextFieldState
   Future<Response> getPlaceDetailsFromPlaceId(Prediction prediction) async {
     //String key = GlobalConfiguration().getString('google_maps_key');
 
-    var url =
-        "https://maps.googleapis.com/maps/api/place/details/json?placeid=${prediction.placeId}&key=${widget.googleAPIKey}";
+    String url =
+        "https://maps.googleapis.com/maps/api/place/details/json?placeid=${prediction.placeId}";
+    if(widget.googleAPIKey != null) {
+      url +="&key=${widget
+          .googleAPIKey}";
+    }else if(widget.proxy != null){
+      url = widget.proxy + url;
+    }
     Response response = await Dio().get(
       url,
     );
