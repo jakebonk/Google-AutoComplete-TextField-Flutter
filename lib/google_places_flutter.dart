@@ -22,12 +22,14 @@ class GooglePlaceAutoCompleteTextField extends StatefulWidget {
   String proxy;
   int debounceTime = 600;
   List<String> countries = List();
+  Map<String,String> headers;
   TextEditingController textEditingController = TextEditingController();
 
   GooglePlaceAutoCompleteTextField(
       {@required this.textEditingController,
       this.googleAPIKey,
       this.proxy,
+      this.headers,
       this.debounceTime: 600,
       this.inputDecoration: const InputDecoration(),
       this.itmClick,
@@ -51,6 +53,7 @@ class _GooglePlaceAutoCompleteTextFieldState
   TextEditingController controller = TextEditingController();
   final LayerLink _layerLink = LayerLink();
   bool isSearched = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +93,9 @@ class _GooglePlaceAutoCompleteTextFieldState
     }
 
 
+    Options options = Options(headers: headers);
 
-    Response response = await dio.get(url);
+    Response response = await dio.get(url,options: options);
     PlacesAutocompleteResponse subscriptionResponse =
         PlacesAutocompleteResponse.fromJson(response.data);
 
@@ -115,8 +119,13 @@ class _GooglePlaceAutoCompleteTextFieldState
     //   this._overlayEntry.markNeedsBuild();
   }
 
+  Map<String,String> headers = {};
+
   @override
   void initState() {
+    if(widget.headers != null){
+      headers = widget.headers;
+    }
     subject.stream
         .distinct()
         .debounceTime(Duration(milliseconds: widget.debounceTime))
@@ -191,8 +200,10 @@ class _GooglePlaceAutoCompleteTextFieldState
     }else if(widget.proxy != null){
       url = widget.proxy + url;
     }
+    Options options = Options(headers: headers);
     Response response = await Dio().get(
       url,
+      options: options
     );
 
     PlaceDetails placeDetails = PlaceDetails.fromJson(response.data);
