@@ -125,6 +125,7 @@ class _GooglePlaceAutoCompleteTextFieldState
   void initState() {
     if(widget.headers != null){
       headers = widget.headers;
+      print("header:${headers}");
     }
     subject.stream
         .distinct()
