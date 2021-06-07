@@ -22,7 +22,7 @@ class GooglePlaceAutoCompleteTextField extends StatefulWidget {
   String proxy;
   int debounceTime = 600;
   List<String> countries = List();
-  Map<String,String> headers;
+  Map<String,dynamic> headers;
   TextEditingController textEditingController = TextEditingController();
 
   GooglePlaceAutoCompleteTextField(
@@ -119,7 +119,7 @@ class _GooglePlaceAutoCompleteTextFieldState
     //   this._overlayEntry.markNeedsBuild();
   }
 
-  Map<String,String> headers = {};
+  Map<String,dynamic> headers = {};
 
   @override
   void initState() {
