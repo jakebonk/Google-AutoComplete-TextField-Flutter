@@ -91,11 +91,11 @@ class _GooglePlaceAutoCompleteTextFieldState
         }
       }
     }
-
+    print(headers);
     try{
-      url = url +"&lat="+headers["lat"]+"&lng="+headers["lng"];
+      url = url +"&lat="+headers["lat"]+"&lng="+headers["lng"]+"&radius=5000";
     }catch(_){
-
+      print(_);
     }
 
     Response response = await dio.get(url);
@@ -203,10 +203,11 @@ class _GooglePlaceAutoCompleteTextFieldState
     }else if(widget.proxy != null){
       url = widget.proxy + url;
     }
+    print(headers);
     try{
-      url = url +"&lat="+headers["lat"]+"&lng="+headers["lng"];
+      url = url +"&lat="+headers["lat"]+"&lng="+headers["lng"]+"&radius=5000";
     }catch(_){
-
+      print(_);
     }
     Response response = await Dio().get(
       url,
