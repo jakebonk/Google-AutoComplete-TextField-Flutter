@@ -93,9 +93,11 @@ class _GooglePlaceAutoCompleteTextFieldState
     }
 
 
-    Options options = Options(headers: headers);
+    headers.forEach((key, value) {
+      url += "&$key=$value";
+    });
 
-    Response response = await dio.get(url,options: options);
+    Response response = await dio.get(url);
     PlacesAutocompleteResponse subscriptionResponse =
         PlacesAutocompleteResponse.fromJson(response.data);
 
@@ -200,10 +202,11 @@ class _GooglePlaceAutoCompleteTextFieldState
     }else if(widget.proxy != null){
       url = widget.proxy + url;
     }
-    Options options = Options(headers: headers);
+    headers.forEach((key, value) {
+      url += "&$key=$value";
+    });
     Response response = await Dio().get(
       url,
-      options: options
     );
 
     PlaceDetails placeDetails = PlaceDetails.fromJson(response.data);
