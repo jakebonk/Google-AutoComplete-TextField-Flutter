@@ -91,9 +91,8 @@ class _GooglePlaceAutoCompleteTextFieldState
         }
       }
     }
-    print(headers);
     try{
-      url = url +"&lat="+headers["lat"]+"&lng="+headers["lng"]+"&radius=5000";
+      url = url +"&lat="+widget.headers["lat"]+"&lng="+widget.headers["lng"]+"&radius=5000";
     }catch(_){
       print(_);
     }
@@ -122,13 +121,8 @@ class _GooglePlaceAutoCompleteTextFieldState
     //   this._overlayEntry.markNeedsBuild();
   }
 
-  Map<String,dynamic> headers = {};
-
   @override
   void initState() {
-    if(widget.headers != null){
-      headers = widget.headers;
-    }
     subject.stream
         .distinct()
         .debounceTime(Duration(milliseconds: widget.debounceTime))
@@ -203,9 +197,8 @@ class _GooglePlaceAutoCompleteTextFieldState
     }else if(widget.proxy != null){
       url = widget.proxy + url;
     }
-    print(headers);
     try{
-      url = url +"&lat="+headers["lat"]+"&lng="+headers["lng"]+"&radius=5000";
+      url = url +"&lat="+widget.headers["lat"]+"&lng="+widget.headers["lng"]+"&radius=5000";
     }catch(_){
       print(_);
     }
