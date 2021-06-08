@@ -92,10 +92,11 @@ class _GooglePlaceAutoCompleteTextFieldState
       }
     }
 
+    try{
+      url = url +"&lat="+headers["lat"]+"&lng="+headers["lng"];
+    }catch(_){
 
-    headers.forEach((key, value) {
-      url += "&$key=$value";
-    });
+    }
 
     Response response = await dio.get(url);
     PlacesAutocompleteResponse subscriptionResponse =
@@ -202,9 +203,11 @@ class _GooglePlaceAutoCompleteTextFieldState
     }else if(widget.proxy != null){
       url = widget.proxy + url;
     }
-    headers.forEach((key, value) {
-      url += "&$key=$value";
-    });
+    try{
+      url = url +"&lat="+headers["lat"]+"&lng="+headers["lng"];
+    }catch(_){
+
+    }
     Response response = await Dio().get(
       url,
     );
