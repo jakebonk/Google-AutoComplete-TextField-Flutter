@@ -29,6 +29,7 @@ class Prediction {
   String id;
   List<MatchedSubstrings> matchedSubstrings;
   String placeId;
+  String formattedAddress;
   String reference;
   StructuredFormatting structuredFormatting;
   List<Terms> terms;
@@ -41,6 +42,7 @@ class Prediction {
       this.id,
       this.matchedSubstrings,
       this.placeId,
+      this.formattedAddress,
       this.reference,
       this.structuredFormatting,
       this.terms,

@@ -207,7 +207,7 @@ class _GooglePlaceAutoCompleteTextFieldState
     );
 
     PlaceDetails placeDetails = PlaceDetails.fromJson(response.data);
-
+    prediction.formattedAddress = placeDetails.result.formattedAddress;
     prediction.lat = placeDetails.result.geometry.location.lat.toString();
     prediction.lng = placeDetails.result.geometry.location.lng.toString();
 
