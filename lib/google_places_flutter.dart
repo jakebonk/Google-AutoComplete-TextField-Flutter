@@ -159,7 +159,7 @@ class _GooglePlaceAutoCompleteTextFieldState
                               if (index < alPredictions.length) {
                                 widget.itmClick(alPredictions[index]);
                                 if (!widget.isLatLngRequired) return;
-
+                                print("here");
                                 getPlaceDetailsFromPlaceId(
                                     alPredictions[index]);
 
@@ -207,6 +207,7 @@ class _GooglePlaceAutoCompleteTextFieldState
     );
 
     PlaceDetails placeDetails = PlaceDetails.fromJson(response.data);
+    print(placeDetails.result.formattedAddress);
     prediction.formattedAddress = placeDetails.result.formattedAddress;
     prediction.lat = placeDetails.result.geometry.location.lat.toString();
     prediction.lng = placeDetails.result.geometry.location.lng.toString();
