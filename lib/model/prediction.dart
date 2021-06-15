@@ -51,6 +51,7 @@ class Prediction {
       this.lng});
 
   Prediction.fromJson(Map<String, dynamic> json) {
+    print(json);
     description = json['description'];
     id = json['id'];
     if (json['matched_substrings'] != null) {
