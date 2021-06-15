@@ -159,7 +159,6 @@ class _GooglePlaceAutoCompleteTextFieldState
                               if (index < alPredictions.length) {
                                 widget.itmClick(alPredictions[index]);
                                 if (!widget.isLatLngRequired) return;
-                                print("here");
                                 getPlaceDetailsFromPlaceId(
                                     alPredictions[index]);
 
@@ -168,7 +167,7 @@ class _GooglePlaceAutoCompleteTextFieldState
                             },
                             child: Container(
                                 padding: EdgeInsets.all(10),
-                                child: Text(alPredictions[index].formattedAddress)),
+                                child: Text(alPredictions[index].description)),
                           );
                         },
                       )),
