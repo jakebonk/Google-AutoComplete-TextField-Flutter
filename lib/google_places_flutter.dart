@@ -168,7 +168,7 @@ class _GooglePlaceAutoCompleteTextFieldState
                             },
                             child: Container(
                                 padding: EdgeInsets.all(10),
-                                child: Text(alPredictions[index].description)),
+                                child: Text(alPredictions[index].formattedAddress)),
                           );
                         },
                       )),
