@@ -59,7 +59,7 @@ class _GooglePlaceAutoCompleteTextFieldState
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
       link: _layerLink,
-      child: TextFormField(
+      child: TextField(
         decoration: widget.inputDecoration,
         style: widget.textStyle,
         controller: widget.textEditingController,
