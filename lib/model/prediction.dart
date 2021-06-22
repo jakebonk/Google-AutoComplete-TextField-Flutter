@@ -5,9 +5,9 @@ class PlacesAutocompleteResponse {
   PlacesAutocompleteResponse({this.predictions, this.status});
 
   PlacesAutocompleteResponse.fromJson(Map<String, dynamic> json) {
-    if (json['predictions'] != null) {
+    if (json['results'] != null) {
       predictions = new List<Prediction>();
-      json['predictions'].forEach((v) {
+      json['results'].forEach((v) {
         predictions.add(new Prediction.fromJson(v));
       });
     }
@@ -53,6 +53,7 @@ class Prediction {
   Prediction.fromJson(Map<String, dynamic> json) {
     description = json['description'];
     id = json['id'];
+    formattedAddress = json['formatted_address'];
     if (json['matched_substrings'] != null) {
       matchedSubstrings = new List<MatchedSubstrings>();
       json['matched_substrings'].forEach((v) {

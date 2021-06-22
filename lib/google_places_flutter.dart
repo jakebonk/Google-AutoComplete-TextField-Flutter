@@ -70,7 +70,7 @@ class _GooglePlaceAutoCompleteTextFieldState
 
   getLocation(String text) async {
     Dio dio = new Dio();
-    String url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$text";
+    String url = "https://maps.googleapis.com/maps/api/place/textsearch/json?input=$text";
     if(widget.googleAPIKey != null) {
       url +="&key=${widget
           .googleAPIKey}";
@@ -168,7 +168,7 @@ class _GooglePlaceAutoCompleteTextFieldState
                             },
                             child: Container(
                                 padding: EdgeInsets.all(10),
-                                child: Text(alPredictions[index].description)),
+                                child: Text(alPredictions[index].formattedAddress??alPredictions[index].description??"")),
                           );
                         },
                       )),
