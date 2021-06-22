@@ -153,7 +153,7 @@ class _GooglePlaceAutoCompleteTextFieldState
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
-                        itemCount: alPredictions.length,
+                        itemCount: alPredictions.length>=7?6:alPredictions.length,
                         itemBuilder: (BuildContext context, int index) {
                           return InkWell(
                             onTap: () {
