@@ -85,12 +85,13 @@ class _GooglePlaceAutoCompleteTextFieldState
         String country = widget.countries[i];
 
         if (i == 0) {
-          url = url + "&types=address&components=country:$country";
+          url = url + "&components=country:$country";
         } else {
           url = url + "|" + "country:" + country;
         }
       }
     }
+    url = url+"&types=address";
     try{
       url = url +"&lat="+widget.headers["lat"]+"&lng="+widget.headers["lng"]+"&radius=5000";
     }catch(_){
