@@ -85,7 +85,7 @@ class _GooglePlaceAutoCompleteTextFieldState
         String country = widget.countries[i];
 
         if (i == 0) {
-          url = url + "&components=country:$country";
+          url = url + "&types=address&components=country:$country";
         } else {
           url = url + "|" + "country:" + country;
         }
