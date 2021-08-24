@@ -51,7 +51,7 @@ class Prediction {
       this.lng});
 
   Prediction.fromJson(Map<String, dynamic> json) {
-    description = json['description'];
+    description = json['address']["freeformAddress"];
     id = json['id'];
     formattedAddress = json['formatted_address'];
     if (json['matched_substrings'] != null) {
@@ -60,7 +60,7 @@ class Prediction {
         matchedSubstrings.add(new MatchedSubstrings.fromJson(v));
       });
     }
-    placeId = json['place_id'];
+    placeId = json['id'];
     reference = json['reference'];
     structuredFormatting = json['structured_formatting'] != null
         ? new StructuredFormatting.fromJson(json['structured_formatting'])
@@ -72,8 +72,8 @@ class Prediction {
       });
     }
     types = json['types'].cast<String>();
-    lat = json['lat'];
-    lng = json['lng'];
+    lat = json["position"]['lat'];
+    lng = json["position"]['lon'];
   }
 
   Map<String, dynamic> toJson() {

@@ -70,30 +70,12 @@ class _GooglePlaceAutoCompleteTextFieldState
 
   getLocation(String text) async {
     Dio dio = new Dio();
-    String url = "https://maps.googleapis.com/maps/api/place/textsearch/json?input=$text";
-    if(widget.googleAPIKey != null) {
-      url +="&key=${widget
-          .googleAPIKey}";
-    }else if(widget.proxy != null){
-      url = widget.proxy + url;
+    if(widget.proxy == null){
+      return;
     }
-
-    if (widget.countries != null) {
-      // in
-
-      for (int i = 0; i < widget.countries.length; i++) {
-        String country = widget.countries[i];
-
-        if (i == 0) {
-          url = url + "&components=country:$country";
-        } else {
-          url = url + "|" + "country:" + country;
-        }
-      }
-    }
-    url = url+"&types=address";
+    String url = widget.proxy+"https://atlas.microsoft.com/search/address/json?api-version=1.0&language=en-US&query=$text";
     try{
-      url = url +"&lat="+widget.headers["lat"]+"&lng="+widget.headers["lng"]+"&radius=5000";
+      url = url +"&lat="+widget.headers["lat"]+"&lon="+widget.headers["lng"];
     }catch(_){
       print(_);
     }
