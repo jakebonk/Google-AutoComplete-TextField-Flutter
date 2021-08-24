@@ -171,28 +171,28 @@ class _GooglePlaceAutoCompleteTextFieldState
   Future<Response> getPlaceDetailsFromPlaceId(Prediction prediction) async {
     //String key = GlobalConfiguration().getString('google_maps_key');
 
-    String url =
-        "https://maps.googleapis.com/maps/api/place/details/json?placeid=${prediction.placeId}";
-    if(widget.googleAPIKey != null) {
-      url +="&key=${widget
-          .googleAPIKey}";
-    }else if(widget.proxy != null){
-      url = widget.proxy + url;
-    }
-    try{
-      url = url +"&lat="+widget.headers["lat"]+"&lng="+widget.headers["lng"]+"&radius=5000";
-    }catch(_){
-      print(_);
-    }
-    Response response = await Dio().get(
-      url,
-    );
-
-    PlaceDetails placeDetails = PlaceDetails.fromJson(response.data);
-    print(placeDetails.result.formattedAddress);
-    prediction.formattedAddress = placeDetails.result.formattedAddress;
-    prediction.lat = placeDetails.result.geometry.location.lat.toString();
-    prediction.lng = placeDetails.result.geometry.location.lng.toString();
+    // String url =
+    //     "https://maps.googleapis.com/maps/api/place/details/json?placeid=${prediction.placeId}";
+    // if(widget.googleAPIKey != null) {
+    //   url +="&key=${widget
+    //       .googleAPIKey}";
+    // }else if(widget.proxy != null){
+    //   url = widget.proxy + url;
+    // }
+    // try{
+    //   url = url +"&lat="+widget.headers["lat"]+"&lng="+widget.headers["lng"]+"&radius=5000";
+    // }catch(_){
+    //   print(_);
+    // }
+    // Response response = await Dio().get(
+    //   url,
+    // );
+    //
+    // PlaceDetails placeDetails = PlaceDetails.fromJson(response.data);
+    // print(placeDetails.result.formattedAddress);
+    // prediction.formattedAddress = placeDetails.result.formattedAddress;
+    // prediction.lat = placeDetails.result.geometry.location.lat.toString();
+    // prediction.lng = placeDetails.result.geometry.location.lng.toString();
 
     widget.getPlaceDetailWithLatLng(prediction);
 
