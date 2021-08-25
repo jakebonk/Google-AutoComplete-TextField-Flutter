@@ -69,6 +69,7 @@ class _GooglePlaceAutoCompleteTextFieldState
   }
 
   getLocation(String text) async {
+    print("text:$text");
     Dio dio = new Dio();
     if(widget.proxy == null){
       return;
@@ -80,22 +81,24 @@ class _GooglePlaceAutoCompleteTextFieldState
       print(_);
     }
 
+    print(url);
     Response response = await dio.get(url);
     PlacesAutocompleteResponse subscriptionResponse =
         PlacesAutocompleteResponse.fromJson(response.data);
-
+    print("here");
     if (text.length == 0) {
       alPredictions.clear();
       this._overlayEntry.remove();
       return;
     }
+    print("hajlfsaj");
 
     isSearched = false;
     if (subscriptionResponse.predictions.length > 0) {
       alPredictions.clear();
       alPredictions.addAll(subscriptionResponse.predictions);
     }
-
+    print("asfjlsajflaskjf");
     //if (this._overlayEntry == null)
 
     this._overlayEntry = null;

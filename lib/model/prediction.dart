@@ -5,6 +5,7 @@ class PlacesAutocompleteResponse {
   PlacesAutocompleteResponse({this.predictions, this.status});
 
   PlacesAutocompleteResponse.fromJson(Map<String, dynamic> json) {
+    print(json);
     if (json['results'] != null) {
       predictions = new List<Prediction>();
       json['results'].forEach((v) {
@@ -51,29 +52,18 @@ class Prediction {
       this.lng});
 
   Prediction.fromJson(Map<String, dynamic> json) {
-    description = json['address']["freeformAddress"];
     id = json['id'];
-    formattedAddress = json['formatted_address'];
-    if (json['matched_substrings'] != null) {
-      matchedSubstrings = new List<MatchedSubstrings>();
-      json['matched_substrings'].forEach((v) {
-        matchedSubstrings.add(new MatchedSubstrings.fromJson(v));
-      });
+    try {
+      description = json['address']["freeformAddress"]??"";
+      formattedAddress = json['address']["freeformAddress"]??"";
+    }catch(_){
+      description = "";
+      formattedAddress = "";
     }
     placeId = json['id'];
-    reference = json['reference'];
-    structuredFormatting = json['structured_formatting'] != null
-        ? new StructuredFormatting.fromJson(json['structured_formatting'])
-        : null;
-    if (json['terms'] != null) {
-      terms = new List<Terms>();
-      json['terms'].forEach((v) {
-        terms.add(new Terms.fromJson(v));
-      });
-    }
-    types = json['types'].cast<String>();
-    lat = json["position"]['lat'];
-    lng = json["position"]['lon'];
+    reference = json['reference']??"";
+    lat = json["position"]['lat'].toString();
+    lng = json["position"]['lon'].toString();
   }
 
   Map<String, dynamic> toJson() {
