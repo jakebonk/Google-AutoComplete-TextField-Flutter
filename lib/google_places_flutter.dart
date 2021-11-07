@@ -13,20 +13,21 @@ import 'package:rxdart/rxdart.dart';
 
 class GooglePlaceAutoCompleteTextField extends StatefulWidget {
   InputDecoration inputDecoration;
-  ItemClick itmClick;
-  GetPlaceDetailswWithLatLng getPlaceDetailWithLatLng;
+  ItemClick? itmClick;
+  GetPlaceDetailswWithLatLng? getPlaceDetailWithLatLng;
   bool isLatLngRequired = true;
 
   TextStyle textStyle;
-  String googleAPIKey;
-  String proxy;
+  String? googleAPIKey;
   int debounceTime = 600;
-  List<String> countries = List();
-  Map<String,dynamic> headers;
+  List<String>? countries = [];
   TextEditingController textEditingController = TextEditingController();
 
+  String? proxy;
+  Map<String,dynamic>? headers;
+
   GooglePlaceAutoCompleteTextField(
-      {@required this.textEditingController,
+      {required this.textEditingController,
       this.googleAPIKey,
       this.proxy,
       this.headers,
@@ -47,8 +48,8 @@ class GooglePlaceAutoCompleteTextField extends StatefulWidget {
 class _GooglePlaceAutoCompleteTextFieldState
     extends State<GooglePlaceAutoCompleteTextField> {
   final subject = new PublishSubject<String>();
-  OverlayEntry _overlayEntry;
-  List<Prediction> alPredictions = new List();
+  OverlayEntry? _overlayEntry;
+  List<Prediction> alPredictions = [];
 
   TextEditingController controller = TextEditingController();
   final LayerLink _layerLink = LayerLink();
@@ -74,9 +75,9 @@ class _GooglePlaceAutoCompleteTextFieldState
     if(widget.proxy == null){
       return;
     }
-    String url = widget.proxy+"https://atlas.microsoft.com/search/address/json?api-version=1.0&language=en-US&query=$text";
+    String url = widget.proxy!+"https://atlas.microsoft.com/search/address/json?api-version=1.0&language=en-US&query=$text";
     try{
-      url = url +"&lat="+widget.headers["lat"]+"&lon="+widget.headers["lng"];
+      url = url +"&lat="+widget.headers!["lat"]+"&lon="+widget.headers!["lng"];
     }catch(_){
       print(_);
     }
@@ -88,22 +89,22 @@ class _GooglePlaceAutoCompleteTextFieldState
     print("here");
     if (text.length == 0) {
       alPredictions.clear();
-      this._overlayEntry.remove();
+      this._overlayEntry!.remove();
       return;
     }
     print("hajlfsaj");
 
     isSearched = false;
-    if (subscriptionResponse.predictions.length > 0) {
+    if (subscriptionResponse.predictions!.length > 0) {
       alPredictions.clear();
-      alPredictions.addAll(subscriptionResponse.predictions);
+      alPredictions.addAll(subscriptionResponse.predictions!);
     }
     print("asfjlsajflaskjf");
     //if (this._overlayEntry == null)
 
     this._overlayEntry = null;
     this._overlayEntry = this._createOverlayEntry();
-    Overlay.of(context).insert(this._overlayEntry);
+    Overlay.of(context)!.insert(this._overlayEntry!);
     //   this._overlayEntry.markNeedsBuild();
   }
 
@@ -119,9 +120,9 @@ class _GooglePlaceAutoCompleteTextFieldState
     getLocation(text);
   }
 
-  OverlayEntry _createOverlayEntry() {
+  OverlayEntry? _createOverlayEntry() {
     if (context != null && context.findRenderObject() != null) {
-      RenderBox renderBox = context.findRenderObject();
+      RenderBox renderBox = context.findRenderObject() as RenderBox;
       var size = renderBox.size;
       var offset = renderBox.localToGlobal(Offset.zero);
       return OverlayEntry(
@@ -143,7 +144,7 @@ class _GooglePlaceAutoCompleteTextFieldState
                           return InkWell(
                             onTap: () {
                               if (index < alPredictions.length) {
-                                widget.itmClick(alPredictions[index]);
+                                widget.itmClick!(alPredictions[index]);
                                 if (!widget.isLatLngRequired) return;
                                 getPlaceDetailsFromPlaceId(
                                     alPredictions[index]);
@@ -166,12 +167,12 @@ class _GooglePlaceAutoCompleteTextFieldState
     alPredictions.clear();
     this._overlayEntry = this._createOverlayEntry();
     if (context != null) {
-      Overlay.of(context).insert(this._overlayEntry);
-      this._overlayEntry.markNeedsBuild();
+      Overlay.of(context)!.insert(this._overlayEntry!);
+      this._overlayEntry!.markNeedsBuild();
     }
   }
 
-  Future<Response> getPlaceDetailsFromPlaceId(Prediction prediction) async {
+  Future<Response?> getPlaceDetailsFromPlaceId(Prediction prediction) async {
     //String key = GlobalConfiguration().getString('google_maps_key');
 
     // String url =
@@ -197,7 +198,7 @@ class _GooglePlaceAutoCompleteTextFieldState
     // prediction.lat = placeDetails.result.geometry.location.lat.toString();
     // prediction.lng = placeDetails.result.geometry.location.lng.toString();
 
-    widget.getPlaceDetailWithLatLng(prediction);
+    widget.getPlaceDetailWithLatLng!(prediction);
 
 //    prediction.latLng = new LatLng(
 //        placeDetails.result.geometry.location.lat,
@@ -206,11 +207,11 @@ class _GooglePlaceAutoCompleteTextFieldState
 }
 
 PlacesAutocompleteResponse parseResponse(Map responseBody) {
-  return PlacesAutocompleteResponse.fromJson(responseBody);
+  return PlacesAutocompleteResponse.fromJson(responseBody as Map<String, dynamic>);
 }
 
 PlaceDetails parsePlaceDetailMap(Map responseBody) {
-  return PlaceDetails.fromJson(responseBody);
+  return PlaceDetails.fromJson(responseBody as Map<String, dynamic>);
 }
 
 typedef ItemClick = void Function(Prediction postalCodeResponse);
