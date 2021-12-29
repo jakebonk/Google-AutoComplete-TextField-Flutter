@@ -5,7 +5,6 @@ class PlacesAutocompleteResponse {
   PlacesAutocompleteResponse({this.predictions, this.status});
 
   PlacesAutocompleteResponse.fromJson(Map<String, dynamic> json) {
-    print(json);
     if (json['results'] != null) {
       predictions = [];
       json['results'].forEach((v) {
@@ -57,13 +56,32 @@ class Prediction {
       description = json['address']["freeformAddress"]??"";
       formattedAddress = json['address']["freeformAddress"]??"";
     }catch(_){
-      description = "";
-      formattedAddress = "";
+      try {
+        description = json['description'];
+        formattedAddress = json['formatted_address'];
+      }catch(_){
+        description = "";
+        formattedAddress = "";
+      }
     }
-    placeId = json['id'];
+    try {
+      placeId = json['place_id'];
+    }catch(_) {
+      placeId = json['id'];
+    }
     reference = json['reference']??"";
-    lat = json["position"]['lat'].toString();
-    lng = json["position"]['lon'].toString();
+    try {
+      lat = json["position"]['lat'].toString();
+      lng = json["position"]['lon'].toString();
+    }catch(_){
+      try{
+        lat = json["geometry"]["location"]["lat"].toString();
+        lng = json["geometry"]["location"]["lng"].toString();
+      }catch(_) {
+        lat = json["lat"].toString();
+        lng = json["lng"].toString();
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {

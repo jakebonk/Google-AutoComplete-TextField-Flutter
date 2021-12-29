@@ -24,12 +24,14 @@ class GooglePlaceAutoCompleteTextField extends StatefulWidget {
   TextEditingController textEditingController = TextEditingController();
 
   String? proxy;
+  String? googleProxy;
   Map<String,dynamic>? headers;
 
   GooglePlaceAutoCompleteTextField(
       {required this.textEditingController,
       this.googleAPIKey,
       this.proxy,
+      this.googleProxy,
       this.headers,
       this.debounceTime: 600,
       this.inputDecoration: const InputDecoration(),
@@ -55,6 +57,8 @@ class _GooglePlaceAutoCompleteTextFieldState
   final LayerLink _layerLink = LayerLink();
   bool isSearched = false;
 
+  bool useGoogle = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,42 +74,53 @@ class _GooglePlaceAutoCompleteTextFieldState
   }
 
   getLocation(String text) async {
-    print("text:$text");
     Dio dio = new Dio();
     if(widget.proxy == null){
       return;
     }
-    String url = widget.proxy!+"https://atlas.microsoft.com/search/address/json?api-version=1.0&language=en-US&query=$text";
-    try{
-      url = url +"&lat="+widget.headers!["lat"]+"&lon="+widget.headers!["lng"];
-    }catch(_){
-      print(_);
+    late PlacesAutocompleteResponse subscriptionResponse;
+    if(!useGoogle){
+      String googleUrl = widget.proxy!+"https://atlas.microsoft.com/search/address/json?api-version=1.0&language=en-US&query=$text";
+      try{
+        googleUrl = googleUrl +"&lat="+widget.headers!["lat"]+"&lon="+widget.headers!["lng"];
+      }catch(_){
+        print(_);
+      }
+      Response googleResponse = await dio.get(googleUrl);
+      subscriptionResponse =
+      PlacesAutocompleteResponse.fromJson(googleResponse.data);
+    }else {
+      String url = widget.googleProxy! +
+          "https://maps.googleapis.com/maps/api/geocode/json?address=$text";
+      try {
+        url = url + "&lat=" + widget.headers!["lat"] + "&lng=" +
+            widget.headers!["lng"];
+      } catch (_) {
+        print(_);
+      }
+      Response response = await dio.get(url);
+      subscriptionResponse =
+      PlacesAutocompleteResponse.fromJson(response.data);
     }
-
-    print(url);
-    Response response = await dio.get(url);
-    PlacesAutocompleteResponse subscriptionResponse =
-        PlacesAutocompleteResponse.fromJson(response.data);
-    print("here");
     if (text.length == 0) {
       alPredictions.clear();
       this._overlayEntry!.remove();
       return;
     }
-    print("hajlfsaj");
 
     isSearched = false;
     if (subscriptionResponse.predictions!.length > 0) {
       alPredictions.clear();
       alPredictions.addAll(subscriptionResponse.predictions!);
     }
-    print("asfjlsajflaskjf");
-    //if (this._overlayEntry == null)
 
+    if(this._overlayEntry != null){
+      this._overlayEntry!.remove();
+    }
     this._overlayEntry = null;
     this._overlayEntry = this._createOverlayEntry();
     Overlay.of(context)!.insert(this._overlayEntry!);
-    //   this._overlayEntry.markNeedsBuild();
+    this._overlayEntry!.markNeedsBuild();
   }
 
   @override
@@ -117,6 +132,7 @@ class _GooglePlaceAutoCompleteTextFieldState
   }
 
   textChanged(String text) async {
+    useGoogle = false;
     getLocation(text);
   }
 
@@ -135,12 +151,23 @@ class _GooglePlaceAutoCompleteTextFieldState
                   link: this._layerLink,
                   offset: Offset(0.0, size.height + 5.0),
                   child: Material(
+                      clipBehavior: Clip.antiAlias,
                       elevation: 1.0,
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
-                        itemCount: alPredictions.length>=7?6:alPredictions.length,
+                        itemCount: (alPredictions.length>=7?6:alPredictions.length)+(useGoogle?0:1),
                         itemBuilder: (BuildContext context, int index) {
+                          if(!useGoogle && index == (alPredictions.length>=7?6:alPredictions.length)+(useGoogle?0:1) - 1){
+                            return InkWell(onTap:(){
+                              setState(() {
+                                useGoogle = true;
+                                getLocation(widget.textEditingController.text);
+                              });
+                            },child:  Container(
+                                padding: EdgeInsets.all(10),
+                                child: Text("Show more options",style: TextStyle(color: Colors.blue),)),);
+                          }
                           return InkWell(
                             onTap: () {
                               if (index < alPredictions.length) {
@@ -148,9 +175,8 @@ class _GooglePlaceAutoCompleteTextFieldState
                                 if (!widget.isLatLngRequired) return;
                                 getPlaceDetailsFromPlaceId(
                                     alPredictions[index]);
-
-                                removeOverlay();
                               }
+                              removeOverlay();
                             },
                             child: Container(
                                 padding: EdgeInsets.all(10),
@@ -165,12 +191,17 @@ class _GooglePlaceAutoCompleteTextFieldState
 
   removeOverlay() {
     alPredictions.clear();
+    if(this._overlayEntry != null){
+      this._overlayEntry!.remove();
+    }
     this._overlayEntry = this._createOverlayEntry();
     if (context != null) {
       Overlay.of(context)!.insert(this._overlayEntry!);
       this._overlayEntry!.markNeedsBuild();
     }
   }
+
+
 
   Future<Response?> getPlaceDetailsFromPlaceId(Prediction prediction) async {
     //String key = GlobalConfiguration().getString('google_maps_key');
