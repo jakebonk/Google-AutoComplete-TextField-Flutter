@@ -59,6 +59,7 @@ class _GooglePlaceAutoCompleteTextFieldState
 
   bool useGoogle = false;
 
+  FocusNode _focusNode = new FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +68,7 @@ class _GooglePlaceAutoCompleteTextFieldState
       child: TextField(
         decoration: widget.inputDecoration,
         style: widget.textStyle,
+        focusNode: _focusNode,
         controller: widget.textEditingController,
         onChanged: (string) => (subject.add(string)),
       ),
@@ -129,6 +131,11 @@ class _GooglePlaceAutoCompleteTextFieldState
         .distinct()
         .debounceTime(Duration(milliseconds: widget.debounceTime))
         .listen(textChanged);
+    _focusNode.addListener(() {
+      if(_focusNode.hasFocus){
+        textChanged(widget.textEditingController.text);
+      }
+    });
   }
 
   textChanged(String text) async {
@@ -156,9 +163,9 @@ class _GooglePlaceAutoCompleteTextFieldState
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
-                        itemCount: (alPredictions.length>=7?6:alPredictions.length)+(useGoogle?0:1),
+                        itemCount: (alPredictions.length>=7?6:alPredictions.length)+(useGoogle||widget.textEditingController.text != ""?0:1),
                         itemBuilder: (BuildContext context, int index) {
-                          if(!useGoogle && index == (alPredictions.length>=7?6:alPredictions.length)+(useGoogle?0:1) - 1){
+                          if(!useGoogle && index == (alPredictions.length>=7?6:alPredictions.length)+(useGoogle||widget.textEditingController.text != ""?0:1) - 1){
                             return InkWell(onTap:(){
                               setState(() {
                                 useGoogle = true;
@@ -170,6 +177,8 @@ class _GooglePlaceAutoCompleteTextFieldState
                           }
                           return InkWell(
                             onTap: () {
+                              print("Rebuilding");
+                              FocusScope.of(context).requestFocus(new FocusNode());
                               if (index < alPredictions.length) {
                                 widget.itmClick!(alPredictions[index]);
                                 if (!widget.isLatLngRequired) return;
@@ -193,11 +202,7 @@ class _GooglePlaceAutoCompleteTextFieldState
     alPredictions.clear();
     if(this._overlayEntry != null){
       this._overlayEntry!.remove();
-    }
-    this._overlayEntry = this._createOverlayEntry();
-    if (context != null) {
-      Overlay.of(context)!.insert(this._overlayEntry!);
-      this._overlayEntry!.markNeedsBuild();
+      this._overlayEntry = null;
     }
   }
 
