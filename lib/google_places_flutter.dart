@@ -108,6 +108,7 @@ class _GooglePlaceAutoCompleteTextFieldState
       alPredictions.clear();
       if(this._overlayEntry != null) {
         this._overlayEntry!.remove();
+        this._overlayEntry = null;
       }
       return;
     }
