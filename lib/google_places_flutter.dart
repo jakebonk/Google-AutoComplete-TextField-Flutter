@@ -29,17 +29,17 @@ class GooglePlaceAutoCompleteTextField extends StatefulWidget {
 
   GooglePlaceAutoCompleteTextField(
       {required this.textEditingController,
-      this.googleAPIKey,
-      this.proxy,
-      this.googleProxy,
-      this.headers,
-      this.debounceTime: 600,
-      this.inputDecoration: const InputDecoration(),
-      this.itmClick,
-      this.isLatLngRequired=true,
-      this.textStyle: const TextStyle(),
-      this.countries,
-      this.getPlaceDetailWithLatLng,
+        this.googleAPIKey,
+        this.proxy,
+        this.googleProxy,
+        this.headers,
+        this.debounceTime: 600,
+        this.inputDecoration: const InputDecoration(),
+        this.itmClick,
+        this.isLatLngRequired=true,
+        this.textStyle: const TextStyle(),
+        this.countries,
+        this.getPlaceDetailWithLatLng,
       });
 
   @override
@@ -90,7 +90,7 @@ class _GooglePlaceAutoCompleteTextFieldState
       }
       Response googleResponse = await dio.get(googleUrl);
       subscriptionResponse =
-      PlacesAutocompleteResponse.fromJson(googleResponse.data);
+          PlacesAutocompleteResponse.fromJson(googleResponse.data);
     }else {
       String url = widget.googleProxy! +
           "https://maps.googleapis.com/maps/api/geocode/json?address=$text";
@@ -102,7 +102,7 @@ class _GooglePlaceAutoCompleteTextFieldState
       }
       Response response = await dio.get(url);
       subscriptionResponse =
-      PlacesAutocompleteResponse.fromJson(response.data);
+          PlacesAutocompleteResponse.fromJson(response.data);
     }
     if (text.length == 0) {
       alPredictions.clear();
@@ -118,7 +118,6 @@ class _GooglePlaceAutoCompleteTextFieldState
       alPredictions.clear();
       alPredictions.addAll(subscriptionResponse.predictions!);
     }
-
     if(this._overlayEntry != null){
       this._overlayEntry!.remove();
     }
@@ -153,51 +152,51 @@ class _GooglePlaceAutoCompleteTextFieldState
       var offset = renderBox.localToGlobal(Offset.zero);
       return OverlayEntry(
           builder: (context) => Positioned(
-                left: offset.dx,
-                top: size.height + offset.dy,
-                width: size.width,
-                child: CompositedTransformFollower(
-                  showWhenUnlinked: false,
-                  link: this._layerLink,
-                  offset: Offset(0.0, size.height + 5.0),
-                  child: Material(
-                      clipBehavior: Clip.antiAlias,
-                      elevation: 1.0,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: (alPredictions.length>=7?6:alPredictions.length)+(useGoogle||widget.textEditingController.text != ""?0:1),
-                        itemBuilder: (BuildContext context, int index) {
-                          if(!useGoogle && index == (alPredictions.length>=7?6:alPredictions.length)+(useGoogle||widget.textEditingController.text != ""?0:1) - 1){
-                            return InkWell(onTap:(){
-                              setState(() {
-                                useGoogle = true;
-                                getLocation(widget.textEditingController.text);
-                              });
-                            },child:  Container(
-                                padding: EdgeInsets.all(10),
-                                child: Text("Show more options",style: TextStyle(color: Colors.blue),)),);
+            left: offset.dx,
+            top: size.height + offset.dy,
+            width: size.width,
+            child: CompositedTransformFollower(
+              showWhenUnlinked: false,
+              link: this._layerLink,
+              offset: Offset(0.0, size.height + 5.0),
+              child: Material(
+                  clipBehavior: Clip.antiAlias,
+                  elevation: 1.0,
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: (alPredictions.length>=7?6:alPredictions.length)+(useGoogle?0:1),
+                    itemBuilder: (BuildContext context, int index) {
+                      if(!useGoogle && index == (alPredictions.length>=7?6:alPredictions.length)+(useGoogle?0:1)-1){
+                        return InkWell(onTap:(){
+                          setState(() {
+                            useGoogle = true;
+                            getLocation(widget.textEditingController.text);
+                          });
+                        },child:  Container(
+                            padding: EdgeInsets.all(10),
+                            child: Text("Show more options",style: TextStyle(color: Colors.blue),)),);
+                      }
+                      return InkWell(
+                        onTap: () {
+                          print("Rebuilding");
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                          if (index < alPredictions.length) {
+                            widget.itmClick!(alPredictions[index]);
+                            if (!widget.isLatLngRequired) return;
+                            getPlaceDetailsFromPlaceId(
+                                alPredictions[index]);
                           }
-                          return InkWell(
-                            onTap: () {
-                              print("Rebuilding");
-                              FocusScope.of(context).requestFocus(new FocusNode());
-                              if (index < alPredictions.length) {
-                                widget.itmClick!(alPredictions[index]);
-                                if (!widget.isLatLngRequired) return;
-                                getPlaceDetailsFromPlaceId(
-                                    alPredictions[index]);
-                              }
-                              removeOverlay();
-                            },
-                            child: Container(
-                                padding: EdgeInsets.all(10),
-                                child: Text(alPredictions[index].formattedAddress??alPredictions[index].description??"")),
-                          );
+                          removeOverlay();
                         },
-                      )),
-                ),
-              ));
+                        child: Container(
+                            padding: EdgeInsets.all(10),
+                            child: Text(alPredictions[index].formattedAddress??alPredictions[index].description??"")),
+                      );
+                    },
+                  )),
+            ),
+          ));
     }
   }
 
